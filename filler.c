@@ -4,21 +4,25 @@
 #include <time.h>
 
 const char module[] = "filler";
-const char version[] = "2.0";
+const char version[] = "2.1";
 
 void print_help() {
     fprintf(stderr, "Usage: filler [-a] -n num of bytes outputfile\n");
-    fprintf(stderr, "\nwhere\t-a\twrites out printable chars only [space..0..z]\n");
-    fprintf(stderr, "\t-n\twrites <num of bytes> to <outputfile>\n");
+    fprintf(stderr, "\nwhere\t-a0          writes out printable chars only [space..0..z]\n");
+    fprintf(stderr, "\t-a1          restricts the charachter set to the alphabet [a..z]\n");
+    fprintf(stderr, "\t-n           writes <num of bytes> to <outputfile>\n");
+    fprintf(stderr, "\t--no-random  characters and numbers are in sequence\n");
 }
 
 int main (int nargs, char **argv) {
-	int nbytes, ch, i;
+	int nbytes, ch, i, start_ch;
 	FILE *outf;
     char *outfilename;
     char start, modulo;
 	int ascii_flag;
-    
+	int abc_flag;
+	int random_flag;
+	
     printf("\nThis is %s version %s\n\n", module, version);
     
 	if (nargs <= 2) {
@@ -28,9 +32,18 @@ int main (int nargs, char **argv) {
 	}
 
     ascii_flag = 0;
+	abc_flag = 0;
+	random_flag = 1;
+	
     for (i = 1; i < nargs; i++) {
-        if (strncmp(argv[i], "-a", 2) == 0) {
+		if (strncmp(argv[i], "--no-random", 11) == 0) {
+			random_flag = 0;
+		} else if (strncmp(argv[i], "-a1", 3) == 0) {
+			abc_flag = 1;
+			ascii_flag = 1;
+		} else if (strncmp(argv[i], "-a0", 3) == 0) {
             ascii_flag = 1;
+			abc_flag = 0;
         } else if (strncmp(argv[i], "-n", 2) == 0) {
             ++i; nbytes = atoi(argv[i]);
         } else {
@@ -44,7 +57,10 @@ int main (int nargs, char **argv) {
     if (ascii_flag == 0) {
         start = 0;
         modulo = 200;
-    } else {
+    } else if (abc_flag == 1){
+        start = 'a';
+        modulo = 'z' - start;
+	} else {
         start = ' ';
         modulo = 'z' - start;
     }
@@ -55,8 +71,16 @@ int main (int nargs, char **argv) {
 		return -1;
 	}
 
+	start_ch = start;
 	while (nbytes > 0) {
-		ch = start + rand() % modulo;
+		if (random_flag == 1) {
+			ch = start + rand() % modulo;
+		} else {
+			ch = start_ch++;
+			if (start_ch > start + modulo) {
+				start_ch = start;
+			}  
+		}
 		fputc(ch, outf);
 		--nbytes;
 	}
