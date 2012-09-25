@@ -4,7 +4,7 @@
 #include <time.h>
 
 const char module[] = "filler";
-const char version[] = "2.1";
+const char version[] = "2.1.1";
 
 void print_help() {
     fprintf(stderr, "Usage: filler [-a] -n num of bytes outputfile\n");
@@ -18,7 +18,7 @@ int main (int nargs, char **argv) {
 	int nbytes, ch, i, start_ch;
 	FILE *outf;
     char *outfilename;
-    char start, modulo;
+    unsigned char start, modulo;
 	int ascii_flag;
 	int abc_flag;
 	int random_flag;
@@ -81,7 +81,8 @@ int main (int nargs, char **argv) {
 				start_ch = start;
 			}  
 		}
-		fputc(ch, outf);
+
+		fwrite(&ch, 1, 1, outf);
 		--nbytes;
 	}
 	fclose(outf);
