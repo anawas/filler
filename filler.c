@@ -3,8 +3,9 @@
 #include <string.h>
 #include <time.h>
 
-const char module[] = "filler";
+const char module[]  = "filler";
 const char version[] = "2.1.1";
+const char author[]  = "Andreas Wassmer";
 
 void print_help() {
     fprintf(stderr, "Usage: filler [options] -n num of bytes outputfile\n");
@@ -12,7 +13,7 @@ void print_help() {
 	fprintf(stderr, "\t-a0          writes out printable chars only [space..0..z]\n");
     fprintf(stderr, "\t-a1          restricts the charachter set to the alphabet [a..z]\n");
     fprintf(stderr, "\t--no-random  characters and numbers are in sequence\n");
-    fprintf(stderr, "and\t-n           writes <num of bytes> to <outputfile>\n");
+    fprintf(stderr, "and\t-n           writes <num of bytes> to <outputfile>\n\n");
 }
 
 int main (int nargs, char **argv) {
@@ -24,7 +25,8 @@ int main (int nargs, char **argv) {
 	int abc_flag;
 	int random_flag;
 	
-    printf("\nThis is %s version %s\n\n", module, version);
+    printf("\nThis is %s version %s\n", module, version);
+    printf("(C) 2012, %s\n\n", author);
     
 	if (nargs <= 2) {
 		fprintf(stderr, "%s ERROR -- missing arguments.\n", module);
